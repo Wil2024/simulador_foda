@@ -3,7 +3,7 @@ import pandas as pd
 
 # Configuración de la página
 st.set_page_config(page_title="Simulador FODA - Pollería Koky's", layout="wide")
-st.title("Simulador FODA para Pollería Koky's")
+st.title("🚀 Simulador FODA para Pollería Koky's")
 
 # Logo ASCII de Koky's
 st.code("""
@@ -16,29 +16,13 @@ st.code("""
     Pollería Koky's - ¡Sabor que enamora!
 """, language='')
 
+# Introducción
 st.markdown("**Rol: Gerente General** - Deduce los elementos FODA, clasifícalos y define estrategias para Koky's.")
 
 # Descripción de la empresa
 st.header("Descripción de Pollería Koky's")
 st.write("""
-Pollería Koky's es una cadena de restaurantes con 10 locales en Lima, Perú, especializada en pollo a la brasa y comida criolla. Fundada hace 15 años, es conocida por su sabor tradicional y ambiente familiar. A continuación, se presentan características y contexto de la empresa (tú decides si cada elemento es una fortaleza, debilidad, oportunidad o amenaza):
-- Receta tradicional de pollo a la brasa que atrae clientes recurrentes.
-- Escasa presencia en redes sociales y campañas publicitarias.
-- Creciente demanda de pedidos a través de plataformas digitales.
-- Competencia intensa de cadenas nacionales e internacionales (Norky's, KFC).
-- Equipo con experiencia en atención al cliente y preparación de alimentos.
-- Dependencia de proveedores locales para insumos clave.
-- Posibilidad de abrir locales en distritos emergentes de Lima.
-- Incremento en precios de insumos y energía.
-- Locales en zonas de alto tráfico con fácil acceso.
-- Algunos locales requieren renovación para mejorar la experiencia.
-- Interés en opciones bajas en grasa o acompañamientos saludables.
-- Normas sanitarias más estrictas que exigen mayores inversiones.
-- Sólida reputación en Lima por calidad y servicio.
-- Falta de un sistema robusto de pedidos en línea.
-- Oportunidad de alianzas con apps de delivery (Rappi, PedidosYa).
-- Clientes buscan experiencias gastronómicas innovadoras.
-""")
+Pollería Koky's es una cadena de restaurantes con 10 locales en Lima, Perú. Fundada hace 15 años, es conocida por su sabor tradicional y ambiente familiar. """)
 
 # Objetivos estratégicos
 st.header("Objetivos Estratégicos de Koky's")
@@ -49,24 +33,13 @@ st.write("""
 4. **Fortalecer la presencia de marca** a través de marketing y alianzas.
 """)
 
-# Instrucciones para los estudiantes
+# Instrucciones
 st.header("Instrucciones")
-st.write("""
-1. Lee la descripción de Koky's y deduce si cada elemento es una **fortaleza**, **debilidad**, **oportunidad** o **amenaza**.
-2. Clasifica cada uno de los 16 elementos en la matriz FODA usando los menús desplegables. Asegúrate de que cada categoría tenga exactamente 4 elementos.
-3. Revisa las estrategias cruzadas sugeridas y selecciona al menos 3 que mejor cumplan los objetivos, considerando **costo** (en soles), **tiempo** (en meses) y alineación con los **objetivos estratégicos**.
-4. Justifica tu selección y confirma para recibir retroalimentación y una puntuación.
-""")
+st.write("1. Clasifica los 16 elementos en la matriz FODA.")
+st.write("2. Revisa estrategias cruzadas y selecciona al menos 3.")
+st.write("3. Justifica tu selección considerando costo, tiempo y objetivos.")
 
-# Diccionario para mapear singular a plural
-plural_map = {
-    "Fortaleza": "Fortalezas",
-    "Debilidad": "Debilidades",
-    "Oportunidad": "Oportunidades",
-    "Amenaza": "Amenazas"
-}
-
-# Lista de elementos para clasificar
+# Elementos para clasificar
 elements = [
     "Receta tradicional de pollo a la brasa que atrae clientes recurrentes",
     "Escasa presencia en redes sociales y campañas publicitarias",
@@ -86,7 +59,15 @@ elements = [
     "Clientes buscan experiencias gastronómicas innovadoras"
 ]
 
-# Usar session_state para persistir datos
+# Mapeo de categorías
+plural_map = {
+    "Fortaleza": "Fortalezas",
+    "Debilidad": "Debilidades",
+    "Oportunidad": "Oportunidades",
+    "Amenaza": "Amenazas"
+}
+
+# Inicializar session_state
 if 'foda_classification' not in st.session_state:
     st.session_state.foda_classification = {
         "Fortalezas": [],
@@ -94,59 +75,41 @@ if 'foda_classification' not in st.session_state:
         "Oportunidades": [],
         "Amenazas": []
     }
-
 if 'valid' not in st.session_state:
     st.session_state.valid = False
-
 if 'selected_strategies' not in st.session_state:
     st.session_state.selected_strategies = []
-
 if 'justification' not in st.session_state:
     st.session_state.justification = ""
 
 # --- SECCIÓN DE CLASIFICACIÓN FODA ---
 with st.form("foda_form"):
-    st.header("Clasifica los Elementos FODA")
-    st.write("Selecciona la categoría correspondiente para cada elemento.")
-    
+    st.header("🧩 Clasifica los Elementos FODA")
     selected_categories = {}
     for element in elements:
-        category = st.selectbox(
-            f"Clasifica: {element}",
-            ["Fortaleza", "Debilidad", "Oportunidad", "Amenaza"],
-            key=element
-        )
+        category = st.selectbox(f"Clasifica: {element}", ["Selecciona","Fortaleza", "Debilidad", "Oportunidad", "Amenaza"], key=element)
         selected_categories[element] = category
-    
-    submit = st.form_submit_button("Evaluar Matriz FODA")
-    
-    if submit:
-        # Actualizar clasificación en session_state
+    if st.form_submit_button("Evaluar Matriz FODA"):  # ✅ Botón añadido
         st.session_state.foda_classification = {
             "Fortalezas": [],
             "Debilidades": [],
             "Oportunidades": [],
             "Amenazas": []
         }
-        
         for element, cat in selected_categories.items():
             plural = plural_map[cat]
             st.session_state.foda_classification[plural].append(element)
-        
-        # Validar que cada categoría tenga 4 elementos
-        valid = all(len(st.session_state.foda_classification[cat]) == 4 for cat in st.session_state.foda_classification)
-        st.session_state.valid = valid  # Almacenar el estado en session_state
-        
-        if not valid:
-            st.error("Error: Asegúrate de que cada categoría tenga **exactamente 4 elementos**.")
-            st.stop()
 
-# --- MOSTRAR RESULTADOS SI LA CLASIFICACIÓN ES VÁLIDA ---
+        valid = all(len(st.session_state.foda_classification[cat]) == 4 for cat in st.session_state.foda_classification)
+        st.session_state.valid = valid
+        if not valid:
+            st.error("Error: Asegúrate de que cada categoría tenga exactamente 4 elementos.")
+
+# Mostrar resultados si válido
 if st.session_state.valid:
-    st.success("¡Matriz FODA clasificada correctamente!")
-    
-    # Mostrar matriz FODA
-    st.header("Tu Matriz FODA")
+    st.success("✅ ¡Matriz FODA clasificada correctamente!")
+
+    # Mostrar FODA
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Factores Internos")
@@ -164,126 +127,102 @@ if st.session_state.valid:
         st.write("**Amenazas:**")
         for i, a in enumerate(st.session_state.foda_classification["Amenazas"], 1):
             st.write(f"{i}. {a}")
-    
-    # Generar estrategias cruzadas
-    st.header("Estrategias Cruzadas Recomendadas")
-    
-    # Estrategias FO
-    st.subheader("Estrategias FO (Aprovechar fortalezas para capturar oportunidades)")
+
+    # Definir estrategias
     fo_strategies = [
-        {"estrategia": "Implementar un sistema de pedidos en línea propio...", "costo": 50000, "tiempo": 6, "objetivos": [1, 2], "impacto": "Aumenta ventas por delivery..."},
-        # ... (todos los elementos de FO completos)
+        {"estrategia": "Implementar un sistema de pedidos en línea propio", "costo": 50000, "tiempo": 6, "objetivos": [1, 2], "impacto": "Aumenta ventas por delivery"},
+        {"estrategia": "Lanzar menú saludable", "costo": 30000, "tiempo": 4, "objetivos": [1, 4], "impacto": "Captura nuevos segmentos"},
+        {"estrategia": "Expandir a distritos emergentes", "costo": 120000, "tiempo": 9, "objetivos": [1, 4], "impacto": "Amplía base de clientes"}
     ]
-    fo_df = pd.DataFrame(fo_strategies)
-    st.dataframe(fo_df)
-    
-    # Estrategias FA
-    st.subheader("Estrategias FA (Usar fortalezas para mitigar amenazas)")
     fa_strategies = [
-        {"estrategia": "Reforzar la lealtad de clientes...", "costo": 8000, "tiempo": 2, "objetivos": [1, 4], "impacto": "Retiene clientes..."},
-        # ... (todos los elementos de FA completos)
+        {"estrategia": "Reforzar lealtad con clientes recurrentes", "costo": 8000, "tiempo": 2, "objetivos": [1, 4], "impacto": "Retiene clientes frecuentes"},
+        {"estrategia": "Capacitar equipo en nuevas técnicas", "costo": 15000, "tiempo": 3, "objetivos": [2, 3], "impacto": "Mejora eficiencia"}
     ]
-    fa_df = pd.DataFrame(fa_strategies)
-    st.dataframe(fa_df)
-    
-    # Estrategias DO
-    st.subheader("Estrategias DO (Superar debilidades aprovechando oportunidades)")
     do_strategies = [
-        {"estrategia": "Invertir en marketing digital...", "costo": 30000, "tiempo": 6, "objetivos": [1, 4], "impacto": "Aumenta visibilidad..."},
-        # ... (todos los elementos de DO completos)
+        {"estrategia": "Invertir en marketing digital", "costo": 30000, "tiempo": 6, "objetivos": [1, 4], "impacto": "Mejora visibilidad"},
+        {"estrategia": "Alianzas con apps de delivery", "costo": 40000, "tiempo": 5, "objetivos": [1, 2], "impacto": "Incrementa ventas"}
     ]
-    do_df = pd.DataFrame(do_strategies)
-    st.dataframe(do_df)
-    
-    # Estrategias DA
-    st.subheader("Estrategias DA (Minimizar debilidades para enfrentar amenazas)")
     da_strategies = [
-        {"estrategia": "Implementar un plan de mantenimiento...", "costo": 40000, "tiempo": 10, "objetivos": [3], "impacto": "Reduce gastos..."},
-        # ... (todos los elementos de DA completos)
+        {"estrategia": "Modernizar locales con diseño temático", "costo": 80000, "tiempo": 8, "objetivos": [2, 3], "impacto": "Mejora experiencia y reduce costos"},
+        {"estrategia": "Sistema de gestión energética", "costo": 25000, "tiempo": 4, "objetivos": [3], "impacto": "Reduce gastos"}
     ]
+
+    # Convertir a DataFrames
+    fo_df = pd.DataFrame(fo_strategies)
+    fa_df = pd.DataFrame(fa_strategies)
+    do_df = pd.DataFrame(do_strategies)
     da_df = pd.DataFrame(da_strategies)
-    st.dataframe(da_df)
-    
-    # --- SECCIÓN DE SELECCIÓN DE ESTRATEGIAS ---
+
+    # Tabs para ver estrategias
+    tabs = st.tabs(["FO", "FA", "DO", "DA"])
+    with tabs[0]: st.dataframe(fo_df)
+    with tabs[1]: st.dataframe(fa_df)
+    with tabs[2]: st.dataframe(do_df)
+    with tabs[3]: st.dataframe(da_df)
+
+    # Selección de estrategias
     with st.form("strategy_form"):
-        st.header("Selecciona tus Estrategias")
-        st.write("Elige al menos 3 estrategias que mejor cumplan los objetivos, considerando **costo** (en soles) y **tiempo** (en meses). Recibirás retroalimentación y una puntuación.")
-        
+        st.header("🔍 Selecciona tus Estrategias")
+        st.info("Elige al menos 3 estrategias y justifica tu elección.")
+
         selected_strategies = []
         scores = []
-        for strategy_type, df in [("FO", fo_df), ("FA", fa_df), ("DO", do_df), ("DA", da_df)]:
+
+        strategies_list = [
+            ("FO", fo_df), ("FA", fa_df), ("DO", do_df), ("DA", da_df)
+        ]
+
+        for strategy_type, df in strategies_list:
             st.subheader(f"Estrategias {strategy_type}")
             for i, row in df.iterrows():
                 if st.checkbox(
-                    f"{row['estrategia']} (Costo: S/{row['costo']}, Tiempo: {row['tiempo']} meses, Objetivos: {row['objetivos']})",
+                    f"{row['estrategia']} (Costo: S/{row['costo']}, Tiempo: {row['tiempo']} meses)",
                     key=f"{strategy_type}_{i}"
                 ):
                     selected_strategies.append(row)
-                    # Calcular puntuación
-                    cost_score = max(0, 100 - row['costo'] / 2000)
-                    time_score = max(0, 100 - row['tiempo'] * 5)
-                    obj_score = len(row['objetivos']) * 20
-                    total_score = cost_score + time_score + obj_score
-                    scores.append({"estrategia": row['estrategia'], "puntuación": round(total_score, 2)})
-        
-        justification = st.text_area("Justifica tu selección de estrategias (considera costo, tiempo y objetivos):")
-        submit_strategy = st.form_submit_button("Confirmar Selección")
-        
-        
-if submit_strategy:
-    if len(selected_strategies) >= 3 and justification.strip():
-        # Almacenar selección en session_state
-        st.session_state.selected_strategies = selected_strategies
-        st.session_state.justification = justification
-        st.rerun()  # <<--- CAMBIO AQUÍ
-    else:
-        st.error("Por favor, selecciona al menos 3 estrategias y proporciona una justificación.")
+                    score = max(0, 100 - row['costo']/2000) + max(0, 100 - row['tiempo']*5) + len(row['objetivos']) * 10
+                    scores.append({"estrategia": row['estrategia'], "puntuación": round(score, 2)})
 
-# --- SECCIÓN DE RESULTADOS Y RETROALIMENTACIÓN ---
+        justification = st.text_area("Justifica tu selección considerando costo, tiempo y objetivos:")
+
+        if st.form_submit_button("Confirmar Selección"):  # ✅ Botón agregado
+            if len(selected_strategies) >= 3 and justification.strip():
+                st.session_state.selected_strategies = selected_strategies
+                st.session_state.justification = justification
+                st.rerun()
+            else:
+                st.warning("Por favor, selecciona al menos 3 estrategias y proporciona una justificación válida.")
+
+# Resultados finales
 if st.session_state.selected_strategies:
-    st.success("¡Estrategias seleccionadas correctamente!")
+    st.success("✅ Estrategias seleccionadas exitosamente!")
     selected_strategies = st.session_state.selected_strategies
-    justification = st.session_state.justification
-    
-    total_score = sum(s["puntuación"] for s in scores) / len(selected_strategies)
-    total_costo = sum(s['costo'] for s in selected_strategies)
-    total_tiempo = sum(s['tiempo'] for s in selected_strategies)
-    
-    st.subheader("Estrategias Elegidas")
-    for i, strategy in enumerate(selected_strategies, 1):
-        st.write(f"{i}. **{strategy['estrategia']}**")
-        st.write(f"- Costo: S/{strategy['costo']}")
-        st.write(f"- Tiempo: {strategy['tiempo']} meses")
-        st.write(f"- **Impacto**: {strategy['impacto']}")
-        st.write(f"- **Objetivos cubiertos**: {strategy['objetivos']}")
-        # Buscar puntuación
-        score = next(s["puntuación"] for s in scores if s["estrategia"] == strategy['estrategia'])
-        st.write(f"- **Puntuación**: {score}/300")
-        
-        # Retroalimentación específica
-        if strategy['costo'] > 50000:
-            st.warning(f"¡Costo elevado!: La estrategia '{strategy['estrategia']}' requiere un presupuesto mayor.")
-        if strategy['tiempo'] > 12:
-            st.warning(f"¡Tiempo prolongado!: La estrategia '{strategy['estrategia']}' tarda más de un año.")
-        if len(strategy['objetivos']) < 2:
-            st.info(f"¡Enfocado!: La estrategia '{strategy['estrategia']}' cubre pocos objetivos.")
-    
-    st.write(f"**Costo total estimado: S/{total_costo}**")
-    st.write(f"**Tiempo total estimado: {total_tiempo} meses**")
-    
-    st.subheader("Justificación")
-    st.write(justification)
-    
-    st.subheader("Puntuación Total")
-    st.write(f"Promedio: {round(total_score, 2)}/300")
-    
-    if total_score > 200:
-        st.success("¡Excelente selección! Las estrategias son viables y bien alineadas.")
-    elif total_score > 150:
-        st.info("Buena selección, pero revisa el balance entre costo, tiempo y objetivos.")
-    else:
-        st.warning("Selección mejorable: Prioriza estrategias de menor costo y mayor impacto.")
+    total_cost = sum(s['costo'] for s in selected_strategies)
+    total_time = sum(s['tiempo'] for s in selected_strategies)
+    avg_score = sum(s["puntuación"] for s in scores) / len(scores)
 
-# --- NOTA FINAL ---
+    st.write(f"💰 Costo Total: S/{total_cost}")
+    st.write(f"⏱️ Tiempo Total: {total_time} meses")
+    st.write(f"📊 Puntaje Promedio: {round(avg_score, 2)}/200")
+
+    for i, strat in enumerate(selected_strategies, 1):
+        st.markdown(f"**{i}. {strat['estrategia']}**")
+        st.write(f"- Costo: S/{strat['costo']}")
+        st.write(f"- Tiempo: {strat['tiempo']} meses")
+        st.write(f"- Impacto: {strat['impacto']}")
+        st.write(f"- Objetivos: {strat['objetivos']}")
+        st.write("---")
+
+    st.markdown("### 📝 Justificación")
+    st.write(st.session_state.justification)
+
+    if avg_score > 150:
+        st.success("🌟 Excelente elección. Estrategias bien balanceadas.")
+    elif avg_score > 100:
+        st.info("✔ Buena elección, pero revisa posibles ajustes.")
+    else:
+        st.warning("🛠 Mejora tu selección. Prioriza bajo costo y alto impacto.")
+
+# Nota final
 st.markdown("---")
-st.write("Desarrollado por Wilton Torvisco utilizando Grok 3 para fines educativos. ¡Buena suerte, Gerente General!")
+st.write("🧠 Desarrollado por Wilton Torvisco para fines educativos.")
